@@ -16,10 +16,10 @@ if __name__ == '__main__':
         V[state] = 0
 
     for i in range(5000):
-        observation, _ = env.reset()0
+        observation, _ = env.reset()
         done = False
         while not done:
-            state = int(np.digitize(observation[2], states))
+            state = int(np.digitize(observation[2], states, right=False))
             action = simple_policy(state)
             observation_, reward, terminated, truncated, info = env.step(action)
             state_ = int(np.digitize(observation_[2], states))
