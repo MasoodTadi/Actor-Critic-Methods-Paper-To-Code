@@ -1,12 +1,12 @@
 import numpy as np
-import gym
+import gymnasium as gym
 
 def simple_policy(state):
     action = 0 if state < 5 else 1
     return action
 
 if __name__ == '__main__':
-    env = gym.make('CartPole-v0')
+    env = gym.make('CartPole-v1')
     alpha = 0.1
     gamma = 0.99
 
@@ -16,15 +16,16 @@ if __name__ == '__main__':
         V[state] = 0
 
     for i in range(5000):
-        observation = env.reset()
+        observation, _ = env.reset()0
         done = False
         while not done:
             state = int(np.digitize(observation[2], states))
             action = simple_policy(state)
-            observation_, reward, done, info = env.step(action)
+            observation_, reward, terminated, truncated, info = env.step(action)
             state_ = int(np.digitize(observation_[2], states))
             V[state] = V[state] + alpha*(reward + gamma*V[state_] - V[state])
             observation = observation_
+            done = terminated or truncated
 
     for state in V:
         print(state, '%.3f' % V[state])
