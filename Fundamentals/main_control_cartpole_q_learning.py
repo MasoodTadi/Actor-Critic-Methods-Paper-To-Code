@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 import matplotlib.pyplot as plt
 import numpy as np
 from control_cartpole_q_learning import Agent
@@ -43,7 +43,7 @@ def plot_learning_curve(scores, x):
     plt.show()
 
 if __name__ == '__main__':
-    env = gym.make('CartPole-v0')
+    env = gym.make('CartPole-v1')
     n_games = 50000
     eps_dec =  2 / n_games
     digitizer = CartPoleStateDigitizer()
@@ -53,16 +53,17 @@ if __name__ == '__main__':
     scores = []
 
     for i in range(n_games):
-        observation = env.reset()
+        observation, _ = env.reset()
         done = False
         score = 0
         state = digitizer.digitize(observation)
         while not done:
             action = agent.choose_action(state)
-            observation_, reward, done, info = env.step(action)
+            observation_, reward, terminated, truncated, info = env.step(action)
             state_ = digitizer.digitize(observation_)
             agent.learn(state, action, reward, state_)
             state = state_
+            done = terminated or truncated
             score += reward
         if i % 5000 == 0:
             print('episode ', i, 'score %.1f' % score, 
